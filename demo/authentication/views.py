@@ -11,7 +11,7 @@ from .models import Profile
 
 #profile page
 @login_required(login_url='auth:login')
-@allowed_users(allowed_roles=['customer', 'admin'])
+# @allowed_users(allowed_roles=['customer', 'admin'])
 def profile_page(request, pk):
     return render(request, 'authentication/profile.html', context={
         'profile': Profile.objects.get(pk=pk),
@@ -19,7 +19,7 @@ def profile_page(request, pk):
 
 # Create your views here.
 decorators = [login_required(login_url='auth:login'), staff_only]
-@method_decorator(allowed_users(['admin']), name='dispatch')
+@method_decorator(staff_only, name='dispatch')
 class UsersView(generic.ListView):
     template_name = 'authentication/users.html'
     context_object_name = 'user_list'
@@ -28,15 +28,14 @@ class UsersView(generic.ListView):
 
 @unauthenticated_user
 def register_page(request):
+    if not Group.objects.filter(name='customer').exists():
+        Group.objects.create(name='customer')
+        Group.objects.create(name='admin')
     if request.method == "POST":
         form = CreateUserForm(request.POST)
         if form.is_valid():
             user = form.save()
             messages.success(request, 'Account was created for ' + form.cleaned_data.get('username'))
-            group = Group.objects.get(name='customer')
-            user.groups.add(group)
-            user.save()
-            Profile.objects.create(user=user).save()
             return redirect('auth:login')
         else:
             messages.error(request, 'Got a registration error: ' + str(form.error_messages))

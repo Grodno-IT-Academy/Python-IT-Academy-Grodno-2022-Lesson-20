@@ -19,7 +19,7 @@ def allowed_users(allowed_roles=[]):
             for group in groups:
                 if group.name in allowed_roles:
                     return view_func(request, *args, **kwargs)
-            return HttpResponse('You are not authorized to view this page.')
+            return redirect('polls:index')
         return wrapper_func
     return decorator
 

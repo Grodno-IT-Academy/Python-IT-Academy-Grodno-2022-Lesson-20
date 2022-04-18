@@ -1,3 +1,4 @@
+
 {% extends 'polls/base.html' %}
 {% block Title %}Question{% endblock %}
 {% block Body %}
@@ -5,8 +6,8 @@
         {% csrf_token %}
         <fieldset>
             <legend>Poll</legend>
-            {{ form.as_p }}
-            <input type="submit" value="Submit Poll">
+            {{ form|as_p }}
+            <input type="submit" class="btn btn-success" value="Submit Poll">
         </fieldset>
     </form>
 {% endblock %}

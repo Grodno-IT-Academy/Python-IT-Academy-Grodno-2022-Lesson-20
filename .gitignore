@@ -3,3 +3,4 @@
 .idea
 demo/db.sqlite3
 Pipfile.lock
+__pycache__

@@ -8,6 +8,8 @@ from .forms import ChoiceForm, QuestionForm
 #limiting user view for users not logged in
 from django.contrib.auth.decorators import login_required
 from django.forms.models import inlineformset_factory
+from django.utils.decorators import method_decorator
+from authentication.decorators import allowed_users
 
 # Create your views here.
 class IndexView(generic.ListView):
@@ -16,6 +18,8 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 #create question view
+
+@method_decorator(allowed_users(allowed_roles=['customer']), name='dispatch')
 class CreateQuestion(generic.CreateView):
     model = Question
     fields = ['question_text']
@@ -50,6 +54,7 @@ class DeleteQuestion(generic.DeleteView):
         return reverse('polls:index')
 # create question with choices
 @login_required(login_url=reverse_lazy('auth:login'))
+@allowed_users(allowed_roles=['customer'])
 def create_question_choices(request):
     choice_formset = inlineformset_factory(Question, Choice, fields=['choice_text'], extra=4)
     if request.method == "POST":
@@ -71,6 +76,7 @@ def create_question_choices(request):
         'formset': formset
     })
 @login_required(login_url=reverse_lazy('auth:login'))
+@allowed_users(allowed_roles=['customer'])
 def update_question_choices(request, pk):
     question = get_object_or_404(Question, pk=pk)
     choice_formset = inlineformset_factory(Question, Choice, fields=['choice_text'], extra=2)

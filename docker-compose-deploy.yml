@@ -9,7 +9,8 @@ services:
     environment:
       - SECRET_KEY=django-insecure-=(9g_65x**tzds^oyw+zf_(t!p112cop0k(b8c#tgxj%ok06sp
       - ALLOWED_HOSTS=127.0.0.1,localhost
-      - DEBUG=1
+      - EMAIL_HOST_USER=grodnopythonclassdemo@gmail.com
+      - EMAIL_HOST_PASSWORD=faqcY5-taqses-gofcib
   proxy:
     build:
       context: ./proxy
